@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #ffffff;
+  --fg: #0f172a;
+  --muted: #64748b;
+  --ring: 0 0% 0%;
+  --border: #e2e8f0;
+  --card: #ffffff;
+}
+
+html, body, #__next {
+  height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+.card {
+  @apply rounded-2xl shadow-soft bg-white;
+}
