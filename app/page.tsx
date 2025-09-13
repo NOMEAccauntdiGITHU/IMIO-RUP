@@ -1,39 +1,27 @@
-import { supabaseServer } from '@/lib/supabaseServer';
-import HomeFilters from '@/components/HomeFilters';
-import ProjectCard from '@/components/ProjectCard';
-import type { HomeRow } from '@/types/db';
+import { headers } from 'next/headers';
 
-export default async function Home({
-  searchParams,
-}: { searchParams: { anno?: string; categoria?: string; q?: string; page?: string } }) {
-  const sb = supabaseServer();
+export const dynamic = 'force-dynamic';
 
-  const _anno = searchParams.anno ? Number(searchParams.anno) : null;
-  const _categoria_text = searchParams.categoria ?? null;
-  const _q = searchParams.q ?? null;
-  const page = Number(searchParams.page ?? '1');
-  const limit = 20;
-  const offset = (page - 1) * limit;
+export default async function Home() {
+  const h = headers();
+  const proto = h.get('x-forwarded-proto') ?? 'http';
+  const host = h.get('x-forwarded-host') ?? h.get('host') ?? `localhost:${process.env.PORT ?? 3000}`;
+  const base = `${proto}://${host}`;
 
-  const { data, error } = await sb.rpc('fn_home_progetti_live', {
-    _anno, _categoria_text, _q, _limit: limit, _offset: offset
-  });
-
-  if (error) {
-    return <pre className="text-red-600">Errore: {error.message}</pre>;
+  let health: any = null;
+  try {
+    const res = await fetch(new URL('/health', base), { cache: 'no-store' });
+    health = await res.json();
+  } catch (e:any) {
+    health = { ok: false, error: String(e) };
   }
 
-  const rows = (data ?? []) as HomeRow[];
-
   return (
-    <section className="space-y-4">
-      <h1 className="text-xl font-semibold">Progetti</h1>
-      <HomeFilters />
-      <ul className="grid gap-3">
-        {rows.map((r) => <ProjectCard key={r.cup} r={r} />)}
-      </ul>
-      {rows.length === 0 && <div className="text-sm text-gray-500">Nessun progetto trovato.</div>}
-      <div className="text-xs text-gray-500 mt-4">Pagina {page}</div>
-    </section>
+    <main style={{ padding: 20, fontFamily: 'system-ui, sans-serif' }}>
+      <h1>Suite RUP</h1>
+      <p>health</p>
+      <pre>{JSON.stringify(health, null, 2)}</pre>
+      <p style={{opacity:.7}}>Ripristino home originale: <code>mv app/page.tsx.bak app/page.tsx</code></p>
+    </main>
   );
 }
