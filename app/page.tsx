@@ -1,4 +1,4 @@
-// app/page.tsx (Server Component)
+// app/page.tsx
 import { supabaseServer } from '@/lib/supabaseServer';
 import HomeFilters from '@/components/HomeFilters';
 import ProjectCard from '@/components/ProjectCard';
@@ -12,6 +12,14 @@ type SP = {
   categoria?: string | string[];
   q?: string | string[];
   page?: string | string[];
+};
+
+type RPCArgs = {
+  _anno: number | null;
+  _categoria_text: string | null;
+  _q: string | null;
+  _limit: number;
+  _offset: number;
 };
 
 export default async function Home({ searchParams }: { searchParams?: SP }) {
@@ -34,19 +42,15 @@ export default async function Home({ searchParams }: { searchParams?: SP }) {
   const limit = 20;
   const offset = (page - 1) * limit;
 
-  const { data, error } = await sb.rpc<HomeRow[]>('fn_home_progetti_live', {
-    _anno,
-    _categoria_text,
-    _q,
-    _limit: limit,
-    _offset: offset,
-  });
+  const params: RPCArgs = { _anno, _categoria_text, _q, _limit: limit, _offset: offset };
+
+  const { data, error } = await sb.rpc<HomeRow[], RPCArgs>('fn_home_progetti_live', params);
 
   if (error) {
     return <pre className="text-red-600 whitespace-pre-wrap">Errore: {error.message}</pre>;
   }
 
-  const rows = data ?? [];
+  const rows: HomeRow[] = data ?? [];
 
   return (
     <section className="space-y-4">
