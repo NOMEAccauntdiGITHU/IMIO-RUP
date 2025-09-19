@@ -8,13 +8,16 @@ export async function POST(request: Request) {
     const form = await request.formData();
     const cup_code = String(form.get("cup_code") ?? "").trim().toUpperCase();
     if (!cup_code) {
-      return NextResponse.redirect(new URL("/programmazione/progetti/cup", request.url));
+      return NextResponse.redirect(new URL("/programmazione/progetti/cup", request.url), 303);
     }
     const sb = await supabaseServer();
     await sb.from("cup").upsert({ cup_code }, { onConflict: "cup_code" });
-    return NextResponse.redirect(new URL(`/programmazione/progetti/${encodeURIComponent(cup_code)}`, request.url));
+    return NextResponse.redirect(
+      new URL(`/programmazione/progetti/${encodeURIComponent(cup_code)}`, request.url),
+      303
+    );
   } catch (e) {
     console.error("API /api/cup error:", e);
-    return NextResponse.redirect(new URL("/programmazione/progetti/cup", request.url));
+    return NextResponse.redirect(new URL("/programmazione/progetti/cup", request.url), 303);
   }
 }

@@ -15,13 +15,20 @@ export default function Page({ params }: Props) {
         <div>
           <label htmlFor="titolo" className="block text-sm font-medium text-slate-700">Titolo procedura</label>
           <input
-            id="titolo" name="titolo" type="text" required
+            id="titolo"
+            name="titolo"
+            type="text"
+            required
             placeholder="Es.: Lavori di riqualificazione..."
             className="mt-1 w-full rounded-lg border px-3 py-2 text-sm outline-none focus:border-slate-400"
           />
           <p className="mt-1 text-xs text-slate-500">Inserisci un titolo sintetico della procedura.</p>
         </div>
-        <button type="submit" className="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
+
+        <button
+          type="submit"
+          className="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
+        >
           Crea procedura
         </button>
       </form>
