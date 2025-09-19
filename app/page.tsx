@@ -140,7 +140,12 @@ export default async function Home({
   ];
 
   // La CTA "Nuova procedura" deve aprire Programmazione
-  const newProcedureRoute = "/cup" as Route;
+  // prima
+const newProcedureRoute = "/programmazione" as Route;
+
+// dopo
+const newProcedureRoute = "/progetti" as Route;
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
