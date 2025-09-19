@@ -17,6 +17,7 @@ import {
   BarChart3,
   PanelsTopLeft,
   PlusCircle,
+  Settings,
 } from "lucide-react";
 
 type SP = {
@@ -52,8 +53,7 @@ export default async function Home({
   const qStr = first(sp.q);
   const pageStr = first(sp.page) ?? "1";
 
-  const _anno =
-    annoStr && /^\d{4}$/.test(annoStr) ? parseInt(annoStr, 10) : null;
+  const _anno = annoStr && /^\d{4}$/.test(annoStr) ? parseInt(annoStr, 10) : null;
   const _q = qStr?.trim() || null;
 
   let page = parseInt(pageStr, 10);
@@ -79,6 +79,7 @@ export default async function Home({
     getCount(sb, "template"),
   ]);
 
+  // Query progetti recenti
   let query = sb
     .from("procedura")
     .select(
@@ -98,9 +99,7 @@ export default async function Home({
     .range(offset, offset + limit - 1);
 
   if (_anno !== null) {
-    query = query
-      .gte("created_at", `${_anno}-01-01`)
-      .lt("created_at", `${_anno + 1}-01-01`);
+    query = query.gte("created_at", `${_anno}-01-01`).lt("created_at", `${_anno + 1}-01-01`);
   }
 
   if (_q) {
@@ -110,11 +109,7 @@ export default async function Home({
   const { data, error } = await query;
 
   if (error) {
-    return (
-      <pre className="text-red-600 whitespace-pre-wrap">
-        Errore: {error.message}
-      </pre>
-    );
+    return <pre className="text-red-600 whitespace-pre-wrap">Errore: {error.message}</pre>;
   }
 
   type Row = HomeRow & { id: string };
@@ -127,7 +122,7 @@ export default async function Home({
     fase_codice: r?.fase?.codice ?? null,
   }));
 
-  // Menu principale (href tipizzati)
+  // Menu principale
   const navItems: Array<{
     href: Route;
     label: string;
@@ -141,10 +136,11 @@ export default async function Home({
     { href: "/scadenze" as Route, label: "Scadenze", icon: CalendarClock, total: totalScadenze },
     { href: "/template" as Route, label: "Template", icon: PanelsTopLeft, total: totalTemplate },
     { href: "/report" as Route, label: "Report", icon: BarChart3, total: null },
+    { href: "/admin" as Route, label: "Admin", icon: Settings, total: null },
   ];
 
-  // Route "nuova procedura" (crea la pagina corrispondente nell'app)
-  const newProcedureRoute = "/affidamento/procedure/nuova" as Route;
+  // La CTA "Nuova procedura" deve aprire Programmazione
+  const newProcedureRoute = "/programmazione" as Route;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
@@ -175,7 +171,7 @@ export default async function Home({
           </div>
 
           <div className="px-2">
-            {/* CTA: Nuova procedura (visibile anche da sidebar) */}
+            {/* CTA: Nuova procedura */}
             <Link
               href={newProcedureRoute}
               className="group flex items-center gap-3 rounded-xl border bg-emerald-600 px-3 py-2.5 text-white shadow-sm transition hover:bg-emerald-700"
@@ -220,7 +216,6 @@ export default async function Home({
           {/* Header */}
           <header className="mb-6 flex items-center justify-between">
             <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-            {/* CTA Header: Nuova procedura */}
             <Link
               href={newProcedureRoute}
               className="inline-flex items-center gap-2 rounded-xl border bg-emerald-600 px-3 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-emerald-700"
