@@ -1,23 +1,2 @@
-// app/api/cup/route.ts
-import { NextResponse } from "next/server";
-import { supabaseServer } from "@/lib/supabaseServer";
-export const runtime = "nodejs";
-
-export async function POST(request: Request) {
-  try {
-    const form = await request.formData();
-    const cup_code = String(form.get("cup_code") ?? "").trim().toUpperCase();
-    if (!cup_code) {
-      return NextResponse.redirect(new URL("/programmazione/progetti/cup", request.url), 303);
-    }
-    const sb = await supabaseServer();
-    await sb.from("cup").upsert({ cup_code }, { onConflict: "cup_code" });
-    return NextResponse.redirect(
-      new URL(`/programmazione/progetti/${encodeURIComponent(cup_code)}`, request.url),
-      303
-    );
-  } catch (e) {
-    console.error("API /api/cup error:", e);
-    return NextResponse.redirect(new URL("/programmazione/progetti/cup", request.url), 303);
-  }
-}
+import {NextResponse as R} from "next/server";export const runtime="nodejs";
+export async function POST(req:Request){const f=await req.formData();const c=String(f.get("cup_code")||"").trim().toUpperCase();const u=new URL(c?`/programmazione/progetti/${encodeURIComponent(c)}`:"/programmazione/progetti/cup",req.url);return R.redirect(u,303);}
