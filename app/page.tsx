@@ -135,7 +135,7 @@ export default async function Home({
     { href: "/admin" as Route, label: "Admin", icon: Settings, total: null },
   ];
 
-  const newProcedureRoute = "/progetti" as Route;
+  const newProcedureRoute = "/cup" as Route;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
