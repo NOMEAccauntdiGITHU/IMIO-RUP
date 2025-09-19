@@ -1,11 +1,9 @@
 // app/page.tsx
-import { supabaseServer } from '@/lib/supabaseServer';
-import HomeFilters from '@/components/HomeFilters';
-import ProjectCard from '@/components/ProjectCard';
-import type { HomeRow } from '@/types/db';
-import React from 'react';
-
-export const dynamic = 'force-dynamic';
+import { supabaseServer } from "@/lib/supabaseServer";
+import HomeFilters from "@/components/HomeFilters";
+import ProjectCard from "@/components/ProjectCard";
+import type { HomeRow } from "@/types/db";
+import React from "react";
 
 type SP = {
   anno?: string | string[];
@@ -23,14 +21,14 @@ type RPCArgs = {
 };
 
 export default async function Home({ searchParams }: { searchParams?: SP }) {
-  const sb = supabaseServer();
+  const sb = await supabaseServer();
 
   const first = (v?: string | string[]) => (Array.isArray(v) ? v[0] : v);
 
   const annoStr = first(searchParams?.anno);
   const categoriaStr = first(searchParams?.categoria);
   const qStr = first(searchParams?.q);
-  const pageStr = first(searchParams?.page) ?? '1';
+  const pageStr = first(searchParams?.page) ?? "1";
 
   const _anno = annoStr && /^\d{4}$/.test(annoStr) ? parseInt(annoStr, 10) : null;
   const _categoria_text = categoriaStr?.trim() || null;
@@ -44,13 +42,13 @@ export default async function Home({ searchParams }: { searchParams?: SP }) {
 
   const params: RPCArgs = { _anno, _categoria_text, _q, _limit: limit, _offset: offset };
 
-  const { data, error } = await sb.rpc<HomeRow[], RPCArgs>('fn_home_progetti_live', params);
+  const { data, error } = await sb.rpc("fn_home_progetti_live", params as RPCArgs);
 
   if (error) {
     return <pre className="text-red-600 whitespace-pre-wrap">Errore: {error.message}</pre>;
   }
 
-  const rows: HomeRow[] = data ?? [];
+  const rows: HomeRow[] = (data ?? []) as HomeRow[];
 
   return (
     <section className="space-y-4">
@@ -63,9 +61,7 @@ export default async function Home({ searchParams }: { searchParams?: SP }) {
           </li>
         ))}
       </ul>
-      {rows.length === 0 && (
-        <div className="text-sm text-gray-500">Nessun progetto trovato.</div>
-      )}
+      {rows.length === 0 && <div className="text-sm text-gray-500">Nessun progetto trovato.</div>}
       <div className="text-xs text-gray-500 mt-4">Pagina {page}</div>
     </section>
   );
