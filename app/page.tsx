@@ -18,6 +18,7 @@ import {
   PanelsTopLeft,
   PlusCircle,
   Settings,
+  BadgeCheck,
 } from "lucide-react";
 
 type SP = {
@@ -63,20 +64,24 @@ export default async function Home({
 
   const sb = await supabaseServer();
 
+  // Totali per riassunto
   const [
     totalProcedure,
     totalContratti,
     totalDocumenti,
     totalScadenze,
     totalTemplate,
+    totalCUP,
   ] = await Promise.all([
     getCount(sb, "procedura"),
     getCount(sb, "contratto"),
     getCount(sb, "documento"),
     getCount(sb, "scadenza"),
     getCount(sb, "template"),
+    getCount(sb, "cup"),
   ]);
 
+  // Query progetti recenti
   let query = sb
     .from("procedura")
     .select(
@@ -119,6 +124,7 @@ export default async function Home({
     fase_codice: r?.fase?.codice ?? null,
   }));
 
+  // Menu principale (con CUP nella tua struttura programmazzione/progetti/cup)
   const navItems: Array<{
     href: Route;
     label: string;
@@ -126,6 +132,7 @@ export default async function Home({
     total: number | null;
   }> = [
     { href: "/" as Route, label: "Dashboard", icon: LayoutDashboard, total: null },
+    { href: "/programmazzione/progetti/cup" as Route, label: "CUP", icon: BadgeCheck, total: totalCUP },
     { href: "/affidamento/procedure" as Route, label: "Procedure", icon: FolderKanban, total: totalProcedure },
     { href: "/contratti" as Route, label: "Contratti", icon: Layers, total: totalContratti },
     { href: "/documenti" as Route, label: "Documenti", icon: FileText, total: totalDocumenti },
@@ -135,7 +142,8 @@ export default async function Home({
     { href: "/admin" as Route, label: "Admin", icon: Settings, total: null },
   ];
 
-  const newProcedureRoute = "/cup" as Route;
+  // La CTA "Nuova procedura" apre il form CUP nella tua struttura
+  const newProcedureRoute = "/programmazzione/progetti/cup" as Route;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
@@ -222,6 +230,7 @@ export default async function Home({
             <HomeFilters />
           </div>
 
+          {/* RIASSUNTO */}
           <section aria-label="Riassunto" className="mb-8">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {navItems
@@ -256,6 +265,7 @@ export default async function Home({
             </div>
           </section>
 
+          {/* LISTA PROGETTI */}
           <section className="space-y-3">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Progetti</h2>
