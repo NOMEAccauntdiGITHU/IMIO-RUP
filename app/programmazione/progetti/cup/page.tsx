@@ -1,8 +1,3 @@
-# 1) crea la cartella della route statica "cup"
-mkdir -p app/programmazione/progetti/cup
-
-# 2) crea/sovrascrivi la pagina con la form CUP
-tee app/programmazione/progetti/cup/page.tsx > /dev/null <<'TS'
 // app/programmazione/progetti/cup/page.tsx
 import { supabaseServer } from "@/lib/supabaseServer";
 import { redirect } from "next/navigation";
