@@ -18,7 +18,7 @@ import {
   PanelsTopLeft,
   PlusCircle,
   Settings,
-  BadgeCheck,
+  CheckCircle2, // <- sicuro in lucide-react
 } from "lucide-react";
 
 type SP = {
@@ -124,7 +124,7 @@ export default async function Home({
     fase_codice: r?.fase?.codice ?? null,
   }));
 
-  // Menu principale (con CUP nella tua struttura programmazzione/progetti/cup)
+  // Menu principale (CUP nella struttura /programmazione/progetti/cup)
   const navItems: Array<{
     href: Route;
     label: string;
@@ -132,7 +132,7 @@ export default async function Home({
     total: number | null;
   }> = [
     { href: "/" as Route, label: "Dashboard", icon: LayoutDashboard, total: null },
-    { href: "/programmazzione/progetti/cup" as Route, label: "CUP", icon: BadgeCheck, total: totalCUP },
+    { href: "/programmazione/progetti/cup" as Route, label: "CUP", icon: CheckCircle2, total: totalCUP },
     { href: "/affidamento/procedure" as Route, label: "Procedure", icon: FolderKanban, total: totalProcedure },
     { href: "/contratti" as Route, label: "Contratti", icon: Layers, total: totalContratti },
     { href: "/documenti" as Route, label: "Documenti", icon: FileText, total: totalDocumenti },
@@ -142,8 +142,8 @@ export default async function Home({
     { href: "/admin" as Route, label: "Admin", icon: Settings, total: null },
   ];
 
-  // La CTA "Nuova procedura" apre il form CUP nella tua struttura
-  const newProcedureRoute = "/programmazzione/progetti/cup" as Route;
+  // CTA: form CUP corretto
+  const newProcedureRoute = "/programmazione/progetti/cup" as Route;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
