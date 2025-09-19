@@ -124,7 +124,7 @@ export default async function Home({
     fase_codice: r?.fase?.codice ?? null,
   }));
 
-  // Menu principale (CUP nella struttura /programmazione/programmazione/progetti/cup)
+  // Menu principale (CUP nella struttura /programmazione/progetti/cup)
   const navItems: Array<{
     href: Route;
     label: string;
@@ -132,7 +132,7 @@ export default async function Home({
     total: number | null;
   }> = [
     { href: "/" as Route, label: "Dashboard", icon: LayoutDashboard, total: null },
-    { href: "/programmazione/programmazione/progetti/cup" as Route, label: "CUP", icon: CheckCircle2, total: totalCUP },
+    { href: "/programmazione/progetti/cup" as Route, label: "CUP", icon: CheckCircle2, total: totalCUP },
     { href: "/affidamento/procedure" as Route, label: "Procedure", icon: FolderKanban, total: totalProcedure },
     { href: "/contratti" as Route, label: "Contratti", icon: Layers, total: totalContratti },
     { href: "/documenti" as Route, label: "Documenti", icon: FileText, total: totalDocumenti },
@@ -143,7 +143,7 @@ export default async function Home({
   ];
 
   // CTA: form CUP corretto
-  const newProcedureRoute = "/programmazione/programmazione/progetti/cup" as Route;
+  const newProcedureRoute = "/programmazione/progetti/cup" as Route;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
