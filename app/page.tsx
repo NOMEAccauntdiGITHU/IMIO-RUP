@@ -4,6 +4,7 @@ import HomeFilters from "@/components/HomeFilters";
 import ProjectCard from "@/components/ProjectCard";
 import type { HomeRow } from "@/types/db";
 import Link from "next/link";
+import type { Route } from "next";
 import React from "react";
 import {
   ChevronLeft,
@@ -26,9 +27,14 @@ type SP = {
 
 const first = (v?: string | string[]) => (Array.isArray(v) ? v[0] : v);
 
-async function getCount(sb: Awaited<ReturnType<typeof supabaseServer>>, table: string) {
-  // Conta record senza scaricare dati. Se la tabella non esiste -> ritorna null.
-  const { count, error } = await sb.from(table).select("*", { count: "exact", head: true });
+async function getCount(
+  sb: Awaited<ReturnType<typeof supabaseServer>>,
+  table: string
+) {
+  const { count, error } = await sb.from(table).select("*", {
+    count: "exact",
+    head: true,
+  });
   if (error) return null;
   return count ?? null;
 }
@@ -45,7 +51,8 @@ export default async function Home({
   const qStr = first(sp.q);
   const pageStr = first(sp.page) ?? "1";
 
-  const _anno = annoStr && /^\d{4}$/.test(annoStr) ? parseInt(annoStr, 10) : null;
+  const _anno =
+    annoStr && /^\d{4}$/.test(annoStr) ? parseInt(annoStr, 10) : null;
   const _q = qStr?.trim() || null;
 
   let page = parseInt(pageStr, 10);
@@ -56,20 +63,15 @@ export default async function Home({
 
   const sb = await supabaseServer();
 
-  // Totali per il riassunto (se alcune tabelle non esistono, il totale sarà null e verrà mostrato "—")
-  const [
-    totalProcedure,
-    totalContratti,
-    totalDocumenti,
-    totalScadenze,
-    totalTemplate,
-  ] = await Promise.all([
-    getCount(sb, "procedura"),
-    getCount(sb, "contratto"),
-    getCount(sb, "documento"),
-    getCount(sb, "scadenza"),
-    getCount(sb, "template"),
-  ]);
+  // Totali per il riassunto
+  const [totalProcedure, totalContratti, totalDocumenti, totalScadenze, totalTemplate] =
+    await Promise.all([
+      getCount(sb, "procedura"),
+      getCount(sb, "contratto"),
+      getCount(sb, "documento"),
+      getCount(sb, "scadenza"),
+      getCount(sb, "template"),
+    ]);
 
   let query = sb
     .from("procedura")
@@ -90,7 +92,9 @@ export default async function Home({
     .range(offset, offset + limit - 1);
 
   if (_anno !== null) {
-    query = query.gte("created_at", `${_anno}-01-01`).lt("created_at", `${_anno + 1}-01-01`);
+    query = query
+      .gte("created_at", `${_anno}-01-01`)
+      .lt("created_at", `${_anno + 1}-01-01`);
   }
 
   if (_q) {
@@ -100,31 +104,37 @@ export default async function Home({
   const { data, error } = await query;
 
   if (error) {
-    return <pre className="text-red-600 whitespace-pre-wrap">Errore: {error.message}</pre>;
+    return (
+      <pre className="text-red-600 whitespace-pre-wrap">
+        Errore: {error.message}
+      </pre>
+    );
   }
 
-  const rows: HomeRow[] = (data ?? []).map((r: any) => ({
+  type Row = HomeRow & { id: string };
+  const rows: Row[] = (data ?? []).map((r: any) => ({
     ...r,
+    id: String(r.id),
     cup: r?.cup?.cup_code ?? null,
     ente_nome: r?.ente?.nome ?? null,
     fase_nome: r?.fase?.nome ?? null,
     fase_codice: r?.fase?.codice ?? null,
-  })) as HomeRow[];
+  }));
 
-  // Voci di menu principali
+  // Menu principale (href tipizzati)
   const navItems: Array<{
-    href: string;
+    href: Route;
     label: string;
     icon: React.ElementType;
     total: number | null;
   }> = [
-    { href: "/", label: "Dashboard", icon: LayoutDashboard, total: null },
-    { href: "/affidamento/procedure", label: "Procedure", icon: FolderKanban, total: totalProcedure },
-    { href: "/contratti", label: "Contratti", icon: Layers, total: totalContratti },
-    { href: "/documenti", label: "Documenti", icon: FileText, total: totalDocumenti },
-    { href: "/scadenze", label: "Scadenze", icon: CalendarClock, total: totalScadenze },
-    { href: "/template", label: "Template", icon: PanelsTopLeft, total: totalTemplate },
-    { href: "/report", label: "Report", icon: BarChart3, total: null },
+    { href: "/" as Route, label: "Dashboard", icon: LayoutDashboard, total: null },
+    { href: "/affidamento/procedure" as Route, label: "Procedure", icon: FolderKanban, total: totalProcedure },
+    { href: "/contratti" as Route, label: "Contratti", icon: Layers, total: totalContratti },
+    { href: "/documenti" as Route, label: "Documenti", icon: FileText, total: totalDocumenti },
+    { href: "/scadenze" as Route, label: "Scadenze", icon: CalendarClock, total: totalScadenze },
+    { href: "/template" as Route, label: "Template", icon: PanelsTopLeft, total: totalTemplate },
+    { href: "/report" as Route, label: "Report", icon: BarChart3, total: null },
   ];
 
   return (
@@ -183,7 +193,6 @@ export default async function Home({
 
         {/* MAIN */}
         <main className="flex-1 p-4 md:p-6 lg:p-8">
-          {/* Header */}
           <header className="mb-6 flex items-center justify-between">
             <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
           </header>
@@ -193,11 +202,11 @@ export default async function Home({
             <HomeFilters />
           </div>
 
-          {/* RIASSUNTO CARDS */}
+          {/* RIASSUNTO */}
           <section aria-label="Riassunto" className="mb-8">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {navItems
-                .filter((n) => n.href !== "/")
+                .filter((n) => n.href !== ("/" as Route))
                 .map((n) => {
                   const Icon = n.icon;
                   return (
@@ -233,7 +242,7 @@ export default async function Home({
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Progetti</h2>
               <Link
-                href="/affidamento/procedure"
+                href={"/affidamento/procedure" as Route}
                 className="text-sm font-medium text-indigo-600 underline-offset-4 hover:underline"
               >
                 Vedi tutti
@@ -243,7 +252,13 @@ export default async function Home({
             <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
               {rows.map((r, i) => (
                 <li key={r.id ?? r.cup ?? `${r.titolo}-${i}`}>
-                  <Link href={`/affidamento/procedure/${r.id}`} className="block">
+                  <Link
+                    href={{
+                      pathname: "/affidamento/procedure/[id]",
+                      query: { id: String(r.id) },
+                    }}
+                    className="block"
+                  >
                     <ProjectCard r={r} />
                   </Link>
                 </li>
