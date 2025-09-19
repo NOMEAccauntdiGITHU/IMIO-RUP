@@ -42,7 +42,6 @@ async function getCount(
 }
 
 export default async function Home({
-  // Next 15: searchParams è Promise -> va await-ato
   searchParams,
 }: {
   searchParams: Promise<SP>;
@@ -139,13 +138,8 @@ export default async function Home({
     { href: "/admin" as Route, label: "Admin", icon: Settings, total: null },
   ];
 
-  // La CTA "Nuova procedura" deve aprire Programmazione
-  // prima
-const newProcedureRoute = "/programmazione" as Route;
-
-// dopo
-const newProcedureRoute = "/progetti" as Route;
-
+  // Le CTA devono aprire la pagina "progetti"
+  const newProcedureRoute = "/progetti" as Route;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
@@ -176,7 +170,7 @@ const newProcedureRoute = "/progetti" as Route;
           </div>
 
           <div className="px-2">
-            {/* CTA: Nuova procedura */}
+            {/* CTA: Nuova procedura -> /progetti */}
             <Link
               href={newProcedureRoute}
               className="group flex items-center gap-3 rounded-xl border bg-emerald-600 px-3 py-2.5 text-white shadow-sm transition hover:bg-emerald-700"
