@@ -63,7 +63,6 @@ export default async function Home({
 
   const sb = await supabaseServer();
 
-  // Totali per il riassunto
   const [
     totalProcedure,
     totalContratti,
@@ -78,7 +77,6 @@ export default async function Home({
     getCount(sb, "template"),
   ]);
 
-  // Query progetti recenti
   let query = sb
     .from("procedura")
     .select(
@@ -121,7 +119,6 @@ export default async function Home({
     fase_codice: r?.fase?.codice ?? null,
   }));
 
-  // Menu principale
   const navItems: Array<{
     href: Route;
     label: string;
@@ -138,7 +135,6 @@ export default async function Home({
     { href: "/admin" as Route, label: "Admin", icon: Settings, total: null },
   ];
 
-  // Le CTA devono aprire la pagina "progetti"
   const newProcedureRoute = "/progetti" as Route;
 
   return (
@@ -170,7 +166,6 @@ export default async function Home({
           </div>
 
           <div className="px-2">
-            {/* CTA: Nuova procedura -> /progetti */}
             <Link
               href={newProcedureRoute}
               className="group flex items-center gap-3 rounded-xl border bg-emerald-600 px-3 py-2.5 text-white shadow-sm transition hover:bg-emerald-700"
@@ -212,7 +207,6 @@ export default async function Home({
 
         {/* MAIN */}
         <main className="flex-1 p-4 md:p-6 lg:p-8">
-          {/* Header */}
           <header className="mb-6 flex items-center justify-between">
             <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
             <Link
@@ -224,12 +218,10 @@ export default async function Home({
             </Link>
           </header>
 
-          {/* Filtri */}
           <div className="mb-6 rounded-2xl border bg-white p-3 shadow-sm">
             <HomeFilters />
           </div>
 
-          {/* RIASSUNTO CARDS */}
           <section aria-label="Riassunto" className="mb-8">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {navItems
@@ -264,7 +256,6 @@ export default async function Home({
             </div>
           </section>
 
-          {/* LISTA PROGETTI */}
           <section className="space-y-3">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Progetti</h2>
