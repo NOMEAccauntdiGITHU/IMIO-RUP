@@ -16,6 +16,7 @@ import {
   Layers,
   BarChart3,
   PanelsTopLeft,
+  PlusCircle,
 } from "lucide-react";
 
 type SP = {
@@ -64,14 +65,19 @@ export default async function Home({
   const sb = await supabaseServer();
 
   // Totali per il riassunto
-  const [totalProcedure, totalContratti, totalDocumenti, totalScadenze, totalTemplate] =
-    await Promise.all([
-      getCount(sb, "procedura"),
-      getCount(sb, "contratto"),
-      getCount(sb, "documento"),
-      getCount(sb, "scadenza"),
-      getCount(sb, "template"),
-    ]);
+  const [
+    totalProcedure,
+    totalContratti,
+    totalDocumenti,
+    totalScadenze,
+    totalTemplate,
+  ] = await Promise.all([
+    getCount(sb, "procedura"),
+    getCount(sb, "contratto"),
+    getCount(sb, "documento"),
+    getCount(sb, "scadenza"),
+    getCount(sb, "template"),
+  ]);
 
   let query = sb
     .from("procedura")
@@ -137,20 +143,23 @@ export default async function Home({
     { href: "/report" as Route, label: "Report", icon: BarChart3, total: null },
   ];
 
+  // Route "nuova procedura" (crea la pagina corrispondente nell'app)
+  const newProcedureRoute = "/affidamento/procedure/nuova" as Route;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-900">
-      {/* Toggle sidebar (no-JS) */}
-      <input id="nav-toggle" type="checkbox" className="peer/nav sr-only" />
-
       <div className="mx-auto flex max-w-[1600px] gap-0">
+        {/* Toggle sidebar (no-JS) */}
+        <input id="nav-toggle" type="checkbox" className="peer sr-only" />
+
         {/* SIDEBAR */}
-        <aside className="sticky top-0 h-screen w-72 border-r bg-white/70 backdrop-blur transition-all duration-300 peer-checked/nav:w-20">
+        <aside className="sticky top-0 h-screen w-72 border-r bg-white/70 backdrop-blur transition-all duration-300 peer-checked:w-20">
           <div className="flex items-center justify-between px-3 py-3">
             <div className="flex items-center gap-2">
               <div className="rounded-xl border p-2">
                 <LayoutDashboard className="h-5 w-5" />
               </div>
-              <span className="text-sm font-semibold tracking-wide transition-opacity duration-300 peer-checked/nav:opacity-0 peer-checked/nav:invisible">
+              <span className="text-sm font-semibold tracking-wide transition-opacity duration-300 peer-checked:opacity-0 peer-checked:invisible">
                 Suite RUP
               </span>
             </div>
@@ -160,9 +169,24 @@ export default async function Home({
               aria-label="Riduci/espandi menu"
               title="Riduci/espandi menu"
             >
-              <ChevronLeft className="h-4 w-4 transition peer-checked/nav:hidden" />
-              <ChevronRight className="hidden h-4 w-4 transition peer-checked/nav:block" />
+              <ChevronLeft className="h-4 w-4 transition peer-checked:hidden" />
+              <ChevronRight className="hidden h-4 w-4 transition peer-checked:block" />
             </label>
+          </div>
+
+          <div className="px-2">
+            {/* CTA: Nuova procedura (visibile anche da sidebar) */}
+            <Link
+              href={newProcedureRoute}
+              className="group flex items-center gap-3 rounded-xl border bg-emerald-600 px-3 py-2.5 text-white shadow-sm transition hover:bg-emerald-700"
+            >
+              <div className="grid h-8 w-8 place-items-center rounded-lg bg-white/10">
+                <PlusCircle className="h-4 w-4" />
+              </div>
+              <span className="text-sm font-medium transition-opacity duration-300 peer-checked:opacity-0 peer-checked:invisible">
+                Nuova procedura
+              </span>
+            </Link>
           </div>
 
           <nav className="mt-2 space-y-1 px-2">
@@ -177,7 +201,7 @@ export default async function Home({
                   <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-indigo-100 to-indigo-50 ring-1 ring-inset ring-indigo-200">
                     <Icon className="h-4 w-4" />
                   </div>
-                  <div className="min-w-0 flex-1 transition-all duration-300 peer-checked/nav:opacity-0 peer-checked/nav:invisible">
+                  <div className="min-w-0 flex-1 transition-all duration-300 peer-checked:opacity-0 peer-checked:invisible">
                     <div className="flex items-center justify-between">
                       <span className="truncate text-sm font-medium">{item.label}</span>
                       <span className="text-xs text-slate-500 tabular-nums">
@@ -193,8 +217,17 @@ export default async function Home({
 
         {/* MAIN */}
         <main className="flex-1 p-4 md:p-6 lg:p-8">
+          {/* Header */}
           <header className="mb-6 flex items-center justify-between">
             <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+            {/* CTA Header: Nuova procedura */}
+            <Link
+              href={newProcedureRoute}
+              className="inline-flex items-center gap-2 rounded-xl border bg-emerald-600 px-3 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-emerald-700"
+            >
+              <PlusCircle className="h-4 w-4" />
+              <span>Nuova procedura</span>
+            </Link>
           </header>
 
           {/* Filtri */}
@@ -202,7 +235,7 @@ export default async function Home({
             <HomeFilters />
           </div>
 
-          {/* RIASSUNTO */}
+          {/* RIASSUNTO CARDS */}
           <section aria-label="Riassunto" className="mb-8">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {navItems
