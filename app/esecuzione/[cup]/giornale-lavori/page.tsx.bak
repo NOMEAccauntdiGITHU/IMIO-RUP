@@ -7,7 +7,7 @@ import JSONEditor from '@/components/forms/JSONEditor';
 
 const fetcher=(u:string,init?:any)=>fetch(u,init).then(r=>r.json());
 
-export default async function Page({ params }:{ params: Promise<{ cup?: string; fase?: string; id?: string; }> }){
+export default function Page({ params }:{ params: { cup?: string, fase?: string, id?: string } }){
   const search = typeof window!=='undefined'? new URLSearchParams(window.location.search): new URLSearchParams();
   const procedura = search.get('procedura_id');
   const table = 'giornale_lavori';

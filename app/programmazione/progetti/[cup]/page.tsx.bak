@@ -1,0 +1,1 @@
+export default function Page({params}:{params:{cup:string}}){const c=params.cup.toUpperCase();return(<div><h1>Avvia Procedura — CUP: {c}</h1><form action="/api/procedure" method="post"><input type="hidden" name="cup_code" value={c}/><input name="titolo" required placeholder="Titolo procedura"/><button>Crea procedura</button></form></div>);}

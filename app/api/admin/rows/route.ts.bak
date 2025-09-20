@@ -13,8 +13,7 @@ const exclude = new Set(['table','page','size']);
 const filters = Object.fromEntries(Object.entries(params).filter(([k])=>!exclude.has(k)));
 
   const sb = createAdminClient();
-const q: any = sb as any;
-  let query = q.from(table).select('*', { count: 'exact' });
+  let query = sb.from(table).select('*', { count: 'exact' });
 for (const [k,v] of Object.entries(filters)) {
   query = query.eq(k, v as string);
 }
@@ -30,8 +29,7 @@ export async function POST(req: NextRequest) {
   const record = body.record;
   if (!table || !record) return NextResponse.json({ error: 'Missing table/record' }, { status: 400 });
   const sb = createAdminClient();
-const q: any = sb as any;
-  const { data, error }: any = await q.from(table).insert(record).select().single();
+  const { data, error }: any = await sb.from(table).insert(record).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data);
 }
@@ -41,8 +39,7 @@ export async function PATCH(req: NextRequest) {
   const { table, keyColumn='id', keyValue, record } = body;
   if (!table || keyValue===undefined || !record) return NextResponse.json({ error: 'Missing params' }, { status: 400 });
   const sb = createAdminClient();
-const q: any = sb as any;
-  const { data, error }: any = await q.from(table).update(record).eq(keyColumn, keyValue).select().single();
+  const { data, error }: any = await sb.from(table).update(record).eq(keyColumn, keyValue).select().single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data);
 }
@@ -52,7 +49,6 @@ export async function DELETE(req: NextRequest) {
   const { table, keyColumn='id', keyValue } = body;
   if (!table || keyValue===undefined) return NextResponse.json({ error: 'Missing params' }, { status: 400 });
   const sb = createAdminClient();
-const q: any = sb as any;
 // @ts-expect-error TS2589: Supabase generics troppo profondi, disattivo inferenza con any-cast
   const { data, error }: any = await (sb as any).from(table as any).delete().eq(keyColumn as any, keyValue as any).select();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });

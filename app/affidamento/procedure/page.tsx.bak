@@ -1,11 +1,11 @@
 // app/affidamento/procedure/[id]/page.tsx
-type Props = { params: Promise<{ id: string }> };
+type Props = { params: { id: string } };
 
-export default async function Page({ params }: Props) {
+export default function Page({ params }: Props) {
   return (
     <div className="space-y-4">
       <h1 className="text-2xl font-semibold">Affidamento – Dettaglio Procedura</h1>
-      <div className="card p-6">ID: <code>{(await params).id}</code></div>
+      <div className="card p-6">ID: <code>{params.id}</code></div>
     </div>
   );
 }
